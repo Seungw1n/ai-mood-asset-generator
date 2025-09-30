@@ -8,31 +8,46 @@ let supabaseClient: SupabaseClient;
 
 const isConfigured = isSupabaseConfigured();
 
+console.log('Supabase Configuration Check:', {
+  isConfigured,
+  url: config.supabase.url,
+  hasAnonKey: config.supabase.anonKey ? 'Yes' : 'No',
+  anonKeyLength: config.supabase.anonKey.length
+});
+
 if (isConfigured) {
+  console.log('✅ Supabase client initialized successfully');
   supabaseClient = createClient(config.supabase.url, config.supabase.anonKey);
 } else {
+  console.error('❌ Supabase is NOT configured. Using mock client.');
   console.warn(
-    `Supabase is not configured. Please replace placeholder values in src/lib/supabaseClient.ts. The application will not be able to save or load assets.`
+    `Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment variables. The application will not be able to save or load assets.`
   );
 
   // Create a mock client that will throw descriptive errors when its methods are called.
   // This prevents the app from crashing on load and provides better debugging info.
   const createMockService = (serviceName: string) => {
-    return new Proxy({}, {
-      get(_target, prop) {
-        return () => {
+    const handler = {
+      get(_target: any, prop: string) {
+        // Return a function that returns the proxy itself for chaining
+        return (..._args: any[]) => {
           const errorMsg = `Supabase client is not configured. Cannot call ${serviceName}.${String(prop)}.`;
           // For async functions, we must return a rejected promise.
-          return Promise.reject(new Error(errorMsg));
+          if (prop === 'then' || prop === 'catch' || prop === 'finally') {
+            return Promise.reject(new Error(errorMsg));
+          }
+          // Return the proxy for chaining
+          return new Proxy({}, handler);
         };
       }
-    });
+    };
+    return new Proxy({}, handler);
   };
 
   const mockStorage = {
      from: () => createMockService('storage')
   };
-  
+
   const mockDb = {
     from: () => createMockService('database')
   }
