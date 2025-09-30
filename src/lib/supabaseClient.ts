@@ -27,20 +27,33 @@ if (isConfigured) {
   // Create a mock client that will throw descriptive errors when its methods are called.
   // This prevents the app from crashing on load and provides better debugging info.
   const createMockService = (serviceName: string) => {
-    const handler = {
-      get(_target: any, prop: string) {
-        // Return a function that returns the proxy itself for chaining
+    const errorMsg = `Supabase client is not configured. Cannot call ${serviceName}. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment variables.`;
+
+    const handler: ProxyHandler<any> = {
+      get(_target: any, prop: string | symbol) {
+        // Handle promise methods - await will trigger 'then'
+        if (prop === 'then') {
+          // Return undefined to indicate this is not a thenable
+          // This forces the calling code to treat it as a regular object
+          return undefined;
+        }
+
+        if (prop === 'catch' || prop === 'finally') {
+          return undefined;
+        }
+
+        // For any other method, return a function that returns a rejected promise
+        // wrapped in a new proxy for further chaining
         return (..._args: any[]) => {
-          const errorMsg = `Supabase client is not configured. Cannot call ${serviceName}.${String(prop)}.`;
-          // For async functions, we must return a rejected promise.
-          if (prop === 'then' || prop === 'catch' || prop === 'finally') {
-            return Promise.reject(new Error(errorMsg));
-          }
-          // Return the proxy for chaining
-          return new Proxy({}, handler);
+          // Create a mock promise that will reject when awaited
+          const mockPromise = Promise.reject(new Error(errorMsg));
+
+          // Add chaining support to the rejected promise
+          return new Proxy(mockPromise, handler);
         };
       }
     };
+
     return new Proxy({}, handler);
   };
 

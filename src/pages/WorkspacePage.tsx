@@ -24,19 +24,31 @@ const WorkspacePage: React.FC<WorkspacePageProps> = ({ workspace, onStyleUpdate,
 
   useEffect(() => {
     const fetchAssets = async () => {
-      if (!workspace.id) return;
+      if (!workspace.id) {
+        console.log('No workspace ID, skipping asset fetch');
+        return;
+      }
+
+      console.log('Starting asset fetch for workspace:', workspace.id);
       setIsFetchingAssets(true);
       setError(null);
+
       try {
         const fetchedAssets = await getAssets(workspace.id);
+        console.log('Assets loaded:', fetchedAssets.length);
         setAssets(fetchedAssets);
       } catch (err) {
-        setError(handleError(err));
-        console.error(err);
+        const errorMessage = handleError(err);
+        console.error('Error fetching assets:', errorMessage, err);
+        setError(errorMessage);
+        // Set empty array so UI shows "no assets" instead of loading
+        setAssets([]);
       } finally {
         setIsFetchingAssets(false);
+        console.log('Asset fetch complete');
       }
     };
+
     fetchAssets();
   }, [workspace.id]);
 

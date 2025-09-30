@@ -133,25 +133,45 @@ export const addAsset = async (assetData: Omit<Asset, 'id' | 'createdAt'>): Prom
  * @returns A promise that resolves to an array of assets.
  */
 export const getAssets = async (workspaceId: string): Promise<Asset[]> => {
-  const { data, error } = await supabase
-    .from('assets')
-    .select('*')
-    .eq('workspace_id', workspaceId)
-    .order('created_at', { ascending: false });
+  console.log('Fetching assets for workspace:', workspaceId);
 
-  if (error) {
-    console.error('Error fetching assets from Supabase:', error);
-    throw new AppError('Failed to fetch assets.', 'DATABASE_ERROR', error);
+  try {
+    const { data, error } = await supabase
+      .from('assets')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching assets from Supabase:', error);
+      throw new AppError('Failed to fetch assets.', 'DATABASE_ERROR', error);
+    }
+
+    console.log('Assets fetched successfully:', data?.length || 0, 'items');
+
+    // Convert snake_case to camelCase
+    return (data || []).map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      imageUrl: item.image_url,
+      style: item.style,
+      workspaceId: item.workspace_id,
+      createdAt: item.created_at,
+    })) as Asset[];
+  } catch (error) {
+    console.error('Exception in getAssets:', error);
+
+    // Re-throw AppError as-is
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    // Wrap other errors
+    throw new AppError(
+      'Failed to fetch assets. Please check your Supabase configuration.',
+      'DATABASE_ERROR',
+      error
+    );
   }
-
-  // Convert snake_case to camelCase
-  return (data || []).map(item => ({
-    id: item.id,
-    name: item.name,
-    description: item.description,
-    imageUrl: item.image_url,
-    style: item.style,
-    workspaceId: item.workspace_id,
-    createdAt: item.created_at,
-  })) as Asset[];
 };
