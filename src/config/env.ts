@@ -9,8 +9,23 @@ export const config = {
 } as const;
 
 export const isSupabaseConfigured = (): boolean => {
-  return (
-    config.supabase.url !== 'YOUR_SUPABASE_URL' &&
-    config.supabase.anonKey !== 'YOUR_SUPABASE_ANON_KEY'
-  );
+  const hasUrl = config.supabase.url &&
+                 config.supabase.url !== 'YOUR_SUPABASE_URL' &&
+                 config.supabase.url.trim() !== '';
+  const hasKey = config.supabase.anonKey &&
+                 config.supabase.anonKey !== 'YOUR_SUPABASE_ANON_KEY' &&
+                 config.supabase.anonKey.trim() !== '';
+
+  console.log('Supabase config validation:', {
+    hasUrl,
+    hasKey,
+    urlValue: config.supabase.url,
+    keyLength: config.supabase.anonKey?.length || 0,
+    envVars: {
+      VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL ? 'SET' : 'NOT SET',
+      VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'SET' : 'NOT SET',
+    }
+  });
+
+  return hasUrl && hasKey;
 };

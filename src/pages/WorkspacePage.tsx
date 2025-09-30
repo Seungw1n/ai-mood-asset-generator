@@ -121,6 +121,15 @@ const WorkspacePage: React.FC<WorkspacePageProps> = ({ workspace, onStyleUpdate,
               <div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md" role="alert">
                 <strong className="font-bold">Error: </strong>
                 <span className="block sm:inline">{error}</span>
+                <details className="mt-2 text-xs">
+                  <summary className="cursor-pointer hover:underline">Troubleshooting tips</summary>
+                  <ul className="mt-2 list-disc list-inside space-y-1">
+                    <li>Check browser console for detailed error messages</li>
+                    <li>Verify Supabase environment variables are set in Vercel</li>
+                    <li>Ensure the 'assets' table exists in your Supabase database</li>
+                    <li>Check that RLS policies allow read access to the 'assets' table</li>
+                  </ul>
+                </details>
               </div>
             )}
             <AssetList assets={assets} isFetching={isFetchingAssets} />

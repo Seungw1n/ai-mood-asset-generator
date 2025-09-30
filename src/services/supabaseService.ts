@@ -133,21 +133,48 @@ export const addAsset = async (assetData: Omit<Asset, 'id' | 'createdAt'>): Prom
  * @returns A promise that resolves to an array of assets.
  */
 export const getAssets = async (workspaceId: string): Promise<Asset[]> => {
-  console.log('Fetching assets for workspace:', workspaceId);
+  console.log('🔍 Fetching assets for workspace:', workspaceId);
+  console.log('🔧 Supabase client type:', typeof supabase);
+  console.log('🔧 Supabase client methods:', Object.keys(supabase));
 
   try {
-    const { data, error } = await supabase
+    const query = supabase
       .from('assets')
       .select('*')
       .eq('workspace_id', workspaceId)
       .order('created_at', { ascending: false });
 
+    console.log('📤 Executing query...');
+    const { data, error } = await query;
+
+    console.log('📥 Query response:', {
+      hasData: !!data,
+      hasError: !!error,
+      dataLength: data?.length || 0,
+      errorDetails: error ? {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      } : null
+    });
+
     if (error) {
-      console.error('Error fetching assets from Supabase:', error);
-      throw new AppError('Failed to fetch assets.', 'DATABASE_ERROR', error);
+      console.error('❌ Supabase error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+        fullError: error
+      });
+      throw new AppError(
+        `Database error: ${error.message}`,
+        'DATABASE_ERROR',
+        error
+      );
     }
 
-    console.log('Assets fetched successfully:', data?.length || 0, 'items');
+    console.log('✅ Assets fetched successfully:', data?.length || 0, 'items');
 
     // Convert snake_case to camelCase
     return (data || []).map(item => ({
@@ -160,7 +187,12 @@ export const getAssets = async (workspaceId: string): Promise<Asset[]> => {
       createdAt: item.created_at,
     })) as Asset[];
   } catch (error) {
-    console.error('Exception in getAssets:', error);
+    console.error('💥 Exception in getAssets:', {
+      errorType: error?.constructor?.name,
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined,
+      fullError: error
+    });
 
     // Re-throw AppError as-is
     if (error instanceof AppError) {
@@ -169,7 +201,7 @@ export const getAssets = async (workspaceId: string): Promise<Asset[]> => {
 
     // Wrap other errors
     throw new AppError(
-      'Failed to fetch assets. Please check your Supabase configuration.',
+      `Failed to fetch assets: ${error instanceof Error ? error.message : String(error)}`,
       'DATABASE_ERROR',
       error
     );
