@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSession, setSession, clearSession, isSessionValid, Session } from '../utils/session';
-import { resetAiClient } from '../services/geminiService';
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -29,7 +28,6 @@ export const useAuth = () => {
 
   const logout = useCallback(() => {
     clearSession();
-    resetAiClient();
     setIsAuthenticated(false);
     window.location.hash = '#/login';
   }, []);
