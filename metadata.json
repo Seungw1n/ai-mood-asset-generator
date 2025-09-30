@@ -1,0 +1,5 @@
+{
+  "name": "Nano Banana Icon Asset Generator",
+  "description": "A web application for generating nano banana-themed icon assets. Users can manage workspaces, each with a unique style JSON, and create icons by providing a name and description.",
+  "requestFramePermissions": []
+}

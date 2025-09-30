@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nano Banana Icon Asset Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+      @layer base {
+        html {
+          font-family: 'Roboto', sans-serif;
+        }
+      }
+    </style>
+    <script>
+      // Flicker-prevention script
+      (function() {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+
+      // Tailwind CSS Configuration
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: 'hsl(var(--background))',
+              foreground: 'hsl(var(--foreground))',
+              'foreground-secondary': 'hsl(var(--foreground-secondary))',
+              surface: 'hsl(var(--surface))',
+              'surface-hover': 'hsl(var(--surface-hover))',
+              'surface-hover-active': 'hsl(var(--surface-hover-active))',
+              'border-default': 'hsl(var(--border-default))',
+              'border-input': 'hsl(var(--border-input))',
+              'ring-focus': 'hsl(var(--ring-focus))',
+              accent: 'hsl(var(--accent))',
+              'accent-foreground': 'hsl(var(--accent-foreground))',
+              'accent-hover': 'hsl(var(--accent-hover))',
+              destructive: 'hsl(var(--destructive))'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
+        --foreground-secondary: 215.4 16.3% 46.9%;
+        --surface: 0 0% 100%;
+        --surface-hover: 210 40% 96.1%;
+        --surface-hover-active: 210 40% 93.1%;
+        --border-default: 214.3 31.8% 91.4%;
+        --border-input: 214.3 31.8% 91.4%;
+        --ring-focus: 215 81% 60%; /* Blue */
+        --accent: 215 81% 60%; /* Blue */
+        --accent-foreground: 210 40% 98%;
+        --accent-hover: 215 81% 55%;
+        --destructive: 0 84.2% 60.2%;
+      }
+      
+      .dark {
+        --background: 224 71% 4%;
+        --foreground: 210 40% 98%;
+        --foreground-secondary: 215 14% 65%;
+        --surface: 224 71% 6%;
+        --surface-hover: 224 71% 9%;
+        --surface-hover-active: 224 71% 12%;
+        --border-default: 215 14% 24%;
+        --border-input: 215 14% 34%;
+        --ring-focus: 217 91% 65%; /* Light Blue */
+        --accent: 217 91% 65%; /* Light Blue */
+        --accent-foreground: 222.2 84% 4.9%;
+        --accent-hover: 217 91% 60%;
+        --destructive: 0 62.8% 30.6%;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.21.0",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.4",
+    "vite": "https://aistudiocdn.com/vite@^7.1.7",
+    "@supabase/supabase-js": "https://aistudiocdn.com/@supabase/supabase-js@^2.58.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-background text-foreground transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
