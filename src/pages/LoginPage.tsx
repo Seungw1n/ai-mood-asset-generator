@@ -12,10 +12,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // Check if API key is configured in environment
-  const hasEnvApiKey = typeof import.meta.env.VITE_GEMINI_API_KEY === 'string' &&
-                       import.meta.env.VITE_GEMINI_API_KEY.trim() !== '';
-
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -74,16 +70,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </div>
 
           {error && <p className="text-destructive text-xs text-center">{error}</p>}
-
-          {!hasEnvApiKey && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3">
-              <p className="text-destructive text-xs text-center">
-                ⚠️ Gemini API key is not configured in environment variables.
-                <br />
-                Please set <code className="font-mono bg-destructive/20 px-1 py-0.5 rounded">VITE_GEMINI_API_KEY</code> in your <code className="font-mono bg-destructive/20 px-1 py-0.5 rounded">.env.local</code> file.
-              </p>
-            </div>
-          )}
 
           <div>
             <button
