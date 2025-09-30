@@ -4,7 +4,6 @@ export const config = {
     anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY',
   },
   gemini: {
-    apiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
     model: 'imagen-4.0-generate-001',
   },
 } as const;
